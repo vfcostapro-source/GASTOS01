@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Meus gastos</title><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#0E7C66">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EAF0EE;--sf:#fff;--ink:#10231F;--mut:#5B6F6A;--ac:#0E7C66;--acf:#fff;--ln:#CBD8D4;--bad:#B4380B;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0D1816;--sf:#15251F;--ink:#E6F1EE;--mut:#8FA7A1;--ac:#3DCBA8;--acf:#06201A;--ln:#2A403A;--bad:#FF9466}}
+:root[data-theme="dark"]{--bg:#0D1816;--sf:#15251F;--ink:#E6F1EE;--mut:#8FA7A1;--ac:#3DCBA8;--acf:#06201A;--ln:#2A403A;--bad:#FF9466}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,sans-serif}
+main{max-width:480px;margin:0 auto;padding:20px 16px 110px}
+h1{font-size:26px;font-weight:800;margin:4px 0 18px;letter-spacing:-.5px}
+label{display:block;font-size:14px;color:var(--mut);margin-bottom:6px}
+input,select,textarea{width:100%;font:inherit;font-size:17px;color:var(--ink);background:var(--sf);border:2px solid var(--ln);border-radius:10px;padding:12px;min-height:50px}
+input:disabled{opacity:.45}
+:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:16px 14px}
+.w{grid-column:1/-1}
+#v{font-size:34px;font-weight:800;letter-spacing:-1px}
+.btn{width:100%;min-height:56px;border:0;border-radius:12px;background:var(--ac);color:var(--acf);font:inherit;font-size:19px;font-weight:600;cursor:pointer}
+.btn:active{transform:scale(.98)}
+#msg{min-height:22px;text-align:center;margin:10px 0 0;color:var(--ac);font-weight:600}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--sf);border-top:2px solid var(--ln);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;min-height:58px;border:0;background:none;font:inherit;font-size:16px;color:var(--mut);cursor:pointer}
+nav button[aria-current="true"]{color:var(--ac);font-weight:800;box-shadow:inset 0 3px 0 var(--ac)}
+.mes{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.mes button{width:48px;height:48px;border-radius:50%;border:2px solid var(--ln);background:var(--sf);color:var(--ink);font-size:20px;cursor:pointer}
+.mes b{font-size:20px;text-transform:capitalize}
+.box{background:var(--sf);border:2px solid var(--ln);border-radius:14px;padding:16px;margin-bottom:14px}
+.tot{font-size:40px;font-weight:800;letter-spacing:-1.5px}
+.row{display:flex;justify-content:space-between;gap:10px;padding:6px 0}
+.mut{color:var(--mut);font-size:14px}
+.neg{color:var(--bad)}
+.bar{height:8px;border-radius:4px;background:var(--ln);margin:4px 0 8px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ac)}
+.it{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--ln)}
+.it>div:first-child{flex:1;min-width:0}
+.it .d{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.x{border:0;background:none;color:var(--mut);font-size:20px;min-width:44px;min-height:44px;cursor:pointer}
+.rn{display:flex;align-items:center;gap:10px}
+.rn input{max-width:150px;min-height:44px;font-size:16px}
+.seg{display:flex;border:2px solid var(--ln);border-radius:12px;overflow:hidden;margin-bottom:18px}
+.seg button{flex:1;min-height:48px;border:0;background:var(--sf);color:var(--mut);font:inherit;font-size:16px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ac);color:var(--acf);font-weight:600}
+.up{color:var(--bad)}.dn{color:var(--ac)}
+[hidden]{display:none!important}
+</style></head><body><main>
+<section id="p1">
+<h1 id="h1">Lançar gasto</h1>
+<div class="seg"><button id="mg" aria-pressed="true">Gasto</button><button id="mr" aria-pressed="false">Ganho</button></div>
+<div class="g">
+<div class="w"><label for="dt">Data</label><input id="dt" type="date"></div>
+<div><label for="v">Valor</label><input id="v" inputmode="decimal" placeholder="0,00" autocomplete="off"></div>
+<div class="gs"><label for="f">Forma</label><select id="f"></select></div>
+<div class="gs"><label for="c">Categoria</label><select id="c"></select></div>
+<div class="gs"><label for="n">Parcelas</label><input id="n" type="number" inputmode="numeric" min="1" max="24" value="1"></div>
+<div class="w rc" hidden><label for="o">Quem pagou</label><select id="o"></select></div>
+<div class="w"><label for="ds">Descrição</label><input id="ds" placeholder="Ex.: Trailer" autocomplete="off"></div>
+<div class="w"><button class="btn" id="sv">Salvar</button><p id="msg" role="status"></p></div>
+</div></section>
+<div class="mes" id="ms" hidden><button id="pv" aria-label="Mês anterior">‹</button><b id="mt"></b><button id="nx" aria-label="Próximo mês">›</button></div>
+<section id="p2" hidden>
+<div class="box"><div class="mut">Total gasto no mês</div><div class="tot" id="tt"></div>
+<div class="row"><span>Recebido no mês</span><b id="rd" class="dn"></b></div>
+<div class="row"><span>Sobra</span><b id="sb"></b></div>
+<div class="bar"><i id="pb"></i></div><div class="mut" id="pc"></div></div>
+<div class="box"><div class="mut">No cartão (compras + parcelas)</div><div class="tot" id="cd" style="font-size:28px"></div></div>
+<div class="box"><div class="mut" style="margin-bottom:8px">Por categoria</div><div id="cats"></div></div>
+<div class="box"><div class="mut">Lançamentos</div><div id="ls"></div></div>
+</section>
+<section id="p3" hidden>
+<div class="box"><div class="mut" style="margin-bottom:10px">Gasto mês a mês. Seta verde: gastou menos que no mês anterior. Seta vermelha: gastou mais. O mês em andamento ainda não terminou, então aparece menor.</div><div id="cmp"></div></div>
+<div class="box"><div class="mut" style="margin-bottom:8px">Por categoria, contra o mês anterior</div><div id="ccat"></div></div>
+</section>
+<section id="p4" hidden><h1>Backup</h1>
+<div class="box"><div class="mut" id="bkm"></div><button class="btn" id="bk" style="margin-top:12px">Salvar / enviar backup</button><button class="btn" id="cp" style="margin-top:10px;background:var(--sf);color:var(--ink);border:2px solid var(--ln)">Copiar como texto</button></div>
+<div class="box"><label for="rf">Restaurar de arquivo</label><input id="rf" type="file" accept=".json,application/json"><label for="rt" style="margin-top:14px">Ou cole o texto do backup</label><textarea id="rt" rows="3"></textarea><button class="btn" id="rr" style="margin-top:12px">Restaurar do texto</button></div>
+</section></main>
+<nav><button id="t1" aria-current="true">Lançar</button><button id="t2">Resumo</button><button id="t3">Comparar</button><button id="t4">Backup</button></nav>
+<script>
+const CATS=["Mercado","Comida na rua","Combustível","Lazer e presentes","Assinaturas e apps","Transferências","Contas fixas","Compras","Outros","Parcelado"];
+const FORMAS=["Cartão","Pix","Débito","Dinheiro"];
+let mode="g";
+const K="gastos_v1",$=i=>document.getElementById(i);
+const BRL=new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"});
+const pad=x=>String(x).padStart(2,"0"),esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+let S={items:[],renda:4000,seeded:false};
+try{const x=JSON.parse(localStorage.getItem(K));if(x)S=x}catch(e){}
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+const id=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+function shift(s,k){const[y,m,d]=s.split("-").map(Number);const last=new Date(y,m-1+k+1,0).getDate();return ymd(new Date(y,m-1+k,Math.min(d,last)))}
+
+const num=s=>{s=String(s).trim().replace(/\s/g,"");if(s.includes(","))s=s.replace(/\./g,"").replace(",",".");else if(/^\d{1,3}(\.\d{3})+$/.test(s))s=s.replace(/\./g,"");return parseFloat(s)||0};
+$("f").innerHTML=FORMAS.map(x=>`<option>${x}</option>`).join("");
+$("c").innerHTML=CATS.map(x=>`<option>${x}</option>`).join("");
+$("dt").value=ymd(new Date());
+const syncN=()=>{const on=$("f").value==="Cartão";$("n").disabled=!on;if(!on)$("n").value=1};
+$("f").onchange=syncN;syncN();
+$("o").innerHTML=["Shopee","Shein","iMile","Outro"].map(x=>`<option>${x}</option>`).join("");
+function setMode(m){mode=m;const r=m==="r";document.querySelectorAll(".gs").forEach(e=>e.hidden=r);document.querySelector(".rc").hidden=!r;$("mg").setAttribute("aria-pressed",String(!r));$("mr").setAttribute("aria-pressed",String(r));$("h1").textContent=r?"Lançar ganho":"Lançar gasto";$("ds").placeholder=r?"Opcional":"Ex.: Trailer"}
+$("mg").onclick=()=>setMode("g");$("mr").onclick=()=>setMode("r");
+$("sv").onclick=()=>{
+ const v=num($("v").value),m=$("msg");
+ if(!v||v<=0){m.className="neg";m.textContent="Digite o valor.";$("v").focus();return}
+ if(!$("dt").value){m.className="neg";m.textContent="Escolha a data.";return}
+ if(mode==="r"){S.items.push({id:id(),d:$("dt").value,ds:$("ds").value.trim()||$("o").value,c:$("o").value,f:"Ganho",v,t:"r"});save();$("v").value="";$("ds").value="";m.className="";m.textContent="Ganho salvo.";setTimeout(()=>{m.textContent=""},2500);return}
+ const n=Math.max(1,Math.min(24,parseInt($("n").value)||1)),ds=$("ds").value.trim()||$("c").value;
+ const cents=Math.round(v*100),base=Math.floor(cents/n);
+ for(let k=0;k<n;k++){const val=(k===n-1?cents-base*(n-1):base)/100;
+  S.items.push({id:id(),d:shift($("dt").value,k),ds:n>1?ds+" "+(k+1)+"/"+n:ds,c:$("c").value,f:$("f").value,v:val})}
+ save();$("v").value="";$("ds").value="";$("n").value=1;
+ m.className="";m.textContent=n>1?"Salvo em "+n+" parcelas.":"Salvo.";$("v").focus();
+ setTimeout(()=>{m.textContent=""},2500)};
+let Y=new Date().getFullYear(),M=new Date().getMonth();
+function render(){
+ const key=Y+"-"+pad(M+1),all=S.items.filter(i=>i.d.slice(0,7)===key).sort((a,b)=>b.d.localeCompare(a.d)),its=all.filter(i=>i.t!=="r"),rec=all.filter(i=>i.t==="r").reduce((s,i)=>s+i.v,0);
+ $("mt").textContent=new Date(Y,M,1).toLocaleDateString("pt-BR",{month:"long",year:"numeric"});
+ const tot=its.reduce((s,i)=>s+i.v,0),cd=its.filter(i=>i.f==="Cartão").reduce((s,i)=>s+i.v,0);
+ $("tt").textContent=BRL.format(tot);$("cd").textContent=BRL.format(cd);
+ $("rd").textContent=BRL.format(rec);
+ const sb=rec-tot;$("sb").textContent=BRL.format(sb);$("sb").className=sb<0?"neg":"";
+ const pc=rec>0?tot/rec*100:0;$("pb").style.width=Math.min(100,pc)+"%";
+ $("pc").textContent=rec>0?Math.round(pc)+"% do que você recebeu":"Lance seus ganhos na tela inicial para ver a sobra.";cmp();
+ const by={};its.forEach(i=>by[i.c]=(by[i.c]||0)+i.v);
+ const arr=Object.entries(by).sort((a,b)=>b[1]-a[1]),mx=arr.length?arr[0][1]:1;
+ $("cats").innerHTML=arr.length?arr.map(([c,v])=>`<div class="row"><span>${esc(c)}</span><b>${BRL.format(v)}</b></div><div class="bar"><i style="width:${v/mx*100}%"></i></div>`).join(""):'<div class="mut">Nada lançado neste mês ainda. Use a aba Lançar.</div>';
+ $("ls").innerHTML=all.map(i=>`<div class="it"><div><div class="d">${esc(i.ds)}</div><div class="mut">${i.d.slice(8)}/${i.d.slice(5,7)} · ${i.t==="r"?"Ganho de "+esc(i.c):esc(i.c)+" · "+i.f}</div></div><b class="${i.t==="r"?"dn":""}">${i.t==="r"?"+":""}${BRL.format(i.v)}</b><button class="x" data-id="${i.id}" aria-label="Excluir ${esc(i.ds)}">✕</button></div>`).join("")}
+function cmp(){
+ const mk=d=>d.getFullYear()+"-"+pad(d.getMonth()+1);
+ const sum=(k,r)=>S.items.filter(i=>i.d.slice(0,7)===k&&(i.t==="r")===r).reduce((s,i)=>s+i.v,0);
+ const ms=[];for(let k=5;k>=0;k--)ms.push(mk(new Date(Y,M-k,1)));
+ const g=ms.map(k=>sum(k,false)),mx=Math.max(...g,1);
+ $("cmp").innerHTML=ms.map((k,i)=>{const p=i?g[i-1]:0,dl=p>0?(g[i]-p)/p*100:null,r=sum(k,true);
+  const t=dl===null?"":`<span class="${dl>0?"up":"dn"}">${dl>0?"▲ +":"▼ "}${Math.round(dl)}%</span>`;
+  return `<div class="row"><span style="text-transform:capitalize">${new Date(+k.slice(0,4),+k.slice(5)-1,1).toLocaleDateString("pt-BR",{month:"short",year:"2-digit"})}</span><span><b>${BRL.format(g[i])}</b> ${t}</span></div><div class="bar"><i style="width:${g[i]/mx*100}%"></i></div><div class="mut" style="margin-bottom:10px">Recebido ${BRL.format(r)} · sobra ${BRL.format(r-g[i])}</div>`}).join("");
+ const by=k=>{const o={};S.items.filter(i=>i.d.slice(0,7)===k&&i.t!=="r").forEach(i=>o[i.c]=(o[i.c]||0)+i.v);return o};
+ const A=by(ms[5]),B=by(ms[4]);
+ const rows=CATS.map(c=>[c,A[c]||0,B[c]||0]).filter(x=>x[1]||x[2]).sort((x,y)=>Math.abs(y[1]-y[2])-Math.abs(x[1]-x[2]));
+ $("ccat").innerHTML=rows.length?rows.map(([c,x,y])=>{const d=x-y;return `<div class="row"><span>${esc(c)}</span><span class="${d>0?"up":"dn"}">${d>0?"+":d<0?"-":""}${BRL.format(Math.abs(d))}</span></div>`}).join(""):'<div class="mut">Sem dados para comparar ainda.</div>'}
+$("ls").onclick=e=>{const b=e.target.closest("[data-id]");if(!b)return;S.items=S.items.filter(i=>i.id!==b.dataset.id);save();render()};
+$("pv").onclick=()=>{M--;if(M<0){M=11;Y--}render()};
+$("nx").onclick=()=>{M++;if(M>11){M=0;Y++}render()};
+function tab(n){[1,2,3,4].forEach(i=>{$("p"+i).hidden=n!==i;$("t"+i).setAttribute("aria-current",String(n===i))});$("ms").hidden=n===1||n===4;if(n===2||n===3)render();if(n===4)bkInfo();window.scrollTo(0,0)}
+$("t1").onclick=()=>tab(1);$("t2").onclick=()=>tab(2);$("t3").onclick=()=>tab(3);$("t4").onclick=()=>tab(4);
+const LK="gastos_bk";
+function bkInfo(){let b=null;try{b=localStorage.getItem(LK)}catch(e){}$("bkm").textContent="Último backup: "+(b?b.split("-").reverse().join("/"):"nunca")+". Mande o arquivo para o Drive, WhatsApp ou e-mail."}
+function mark(){try{localStorage.setItem(LK,ymd(new Date()))}catch(e){}bkInfo()}
+async function doBk(){const nm="backup-gastos-"+ymd(new Date())+".json",bl=new Blob([JSON.stringify(S)],{type:"application/json"});
+ try{const f=new File([bl],nm,{type:"application/json"});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:nm});return mark()}}catch(e){if(e.name==="AbortError")return}
+ const a=document.createElement("a");a.href=URL.createObjectURL(bl);a.download=nm;document.body.appendChild(a);a.click();a.remove();mark()}
+function imp(t){try{const o=JSON.parse(t);if(!o||!Array.isArray(o.items))throw 0;if(!confirm("Isso substitui os dados atuais pelos do backup. Continuar?"))return;S=Object.assign({items:[]},o);save();alert("Dados restaurados.");render()}catch(e){alert("Backup inválido.")}}
+$("bk").onclick=doBk;
+$("cp").onclick=()=>navigator.clipboard.writeText(JSON.stringify(S)).then(()=>{mark();alert("Backup copiado. Cole em uma nota ou mensagem para você mesmo.")});
+$("rf").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>imp(r.result);r.readAsText(f)};
+$("rr").onclick=()=>imp($("rt").value);
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script></body></html>
